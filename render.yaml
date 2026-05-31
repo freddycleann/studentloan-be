@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: student-loan-backend
+    runtime: node
+    plan: starter
+    rootDir: app/backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30d
+      - key: SEED_ADMIN_USERNAME
+        value: freddyclean
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: DB_FILE
+        value: /var/data/app.db
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: student-loan
+    disk:
+      name: sqlite-data
+      mountPath: /var/data
+      sizeGB: 1
