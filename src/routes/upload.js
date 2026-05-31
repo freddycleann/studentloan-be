@@ -30,15 +30,17 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
     ? req.file.originalname
     : req.file.originalname?.replace(/\.[^.]+$/, '');
   try {
+    const folder = req.body.folder || 'uploads';
     const result = await uploadBuffer(req.file.buffer, {
-      folder: req.body.folder || 'uploads',
+      folder: folder,
       resource_type,
       filename,
     });
     // Parse PDFs for the "total hours" line in SET e-Learning certs.
+    // ONLY do this if the file is a volunteer certificate! Checklist PDFs are huge and don't need text extraction.
     let hours = null;
     let date = null;
-    if (kind === 'pdf') {
+    if (kind === 'pdf' && folder.includes('volunteer')) {
       try {
         const text = await extractPdfText(req.file.buffer);
         hours = extractCertHours(text);
